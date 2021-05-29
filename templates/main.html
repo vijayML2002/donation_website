@@ -53,18 +53,22 @@
 
 <nav id="navbar_top" class="navbar navbar-expand-lg navbar-dark bg-primary">
  <div class="container">
- 	 <a class="navbar-brand" href="#">Profile</a>
-  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main_nav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-  <div class="collapse navbar-collapse" id="main_nav">
-	<ul class="navbar-nav ms-auto">
-		<li class="nav-item"><a class="nav-link" href="#"> Menu item </a></li>
-		<li class="nav-item"><a class="nav-link" href="#"> Menu item </a></li>
-    <li class="nav-item"><a class="nav-link" href="#"> Menu item </a></li>
-	</ul>
+     <a class="navbar-brand" href="/profile">Profile</a>
+     <a class="navbar-brand" href="/datafill">Post</a>
+     <a class="navbar-brand" href="/rank">Rank</a>
+     <div class="dropdown" style="margin-left: 90%;">
+    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" style="width: 100%">sort by
+    <span class="caret"></span></button>
+    <ul class="dropdown-menu">
+      <li><a href="{{ url_for('main')}}" style="text-decoration: none">none</a></li>        
+      <li><a href="{{ url_for('sort',sort_id=1) }}" style="text-decoration: none">old_to_new</a></li>
+      <li><a href="{{ url_for('sort',sort_id=2) }}" style="text-decoration: none">new_to_old</a></li>
+      <li><a href="{{ url_for('sort',sort_id=3) }}" style="text-decoration: none">high_upvotes</a></li>
+      <li><a href="{{ url_for('sort',sort_id=4) }}" style="text-decoration: none">low_upvotes</a></li>
+    </ul>
+</div>
   </div> <!-- navbar-collapse.// -->
- </div> <!-- container-fluid.// -->
+ <!-- container-fluid.// -->
 </nav>
 </header>
 
@@ -84,22 +88,10 @@
     </div>
     </form>    
 </div>
-    
-<div class="dropdown" style="margin-left: 78%; top: 0%; position: absolute; margin-top: 16.3%">
-    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">sort by
-    <span class="caret"></span></button>
-    <ul class="dropdown-menu">
-      <li><a href="{{ url_for('main')}}">none</a></li>        
-      <li><a href="{{ url_for('sort',sort_id=1) }}">old_to_new</a></li>
-      <li><a href="{{ url_for('sort',sort_id=2) }}">new_to_old</a></li>
-      <li><a href="{{ url_for('sort',sort_id=3) }}">high_upvotes</a></li>
-      <li><a href="{{ url_for('sort',sort_id=4) }}">low_upvotes</a></li>
-    </ul>
-</div>
 
 <br>    
     
-{% if keylen %}
+{% if keyword %}
 <div style="margin-left: 5%">
 <h3>
 Results found : {{keylen}}
@@ -115,13 +107,18 @@ Results found : {{keylen}}
                 <div class="card">
                     <img src="{{data[i]}}" class="card-img-top" alt="..." style="width: 269px;height: 200px;">
                     <div class="card-body">
-                        <a href="{{ url_for('problem',problem_id=prob_id[i]) }}">
+                        <a href="{{ url_for('problem',problem_id=prob_id[i]) }}" style="text-decoration: none">
                         <h5 class="card-title">{{head[i]}}</h5>
                         <p class="card-text">{{det[i]}}</p>
                         </a>
                     </div>
                     <div class="card-footer">
                         <small class="text-muted">created : {{dates[i]}}</small>
+                        {% if like_data[i] == 0 %}
+                        <button type="button" onclick="count(this.id)" class="btn" style="background-color:skyblue" id="{{prob_id[i]}}">upvote</button>
+                        {% else %}
+                        <button type="button" onclick="count(this.id)" class="btn" style="background-color:indianred" id="{{prob_id[i]}}">upvoted</button>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -146,6 +143,42 @@ Results found : {{keylen}}
         document.body.style.paddingTop = '0';
       } 
   });
-}); 
+});
+        function count(id_value){
+            var x = document.getElementById(id_value);
+            
+            
+            if (x.innerHTML=="upvote"){
+                x.innerHTML = "upvoted";
+                x.style.backgroundColor="indianred";
+                send_data(id_value,1);
+                
+            }
+            else {
+                x.innerHTML = "upvote";
+                x.style.backgroundColor="skyblue";
+                send_data(id_value,-1);
+            }
+        }
+        
+        function send_data(phid,value){
+            fetch('/api', {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            method: 'POST',
+            body: JSON.stringify({
+                "probid": phid,
+                "increment": value
+            })
+            }).then(function (response) { 
+                return response.text();
+            }).then(function (text) {
+
+            console.log('POST response: ');
+            console.log(text);
+            })
+
+        }
     </script>
 </html>

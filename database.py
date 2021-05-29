@@ -3,6 +3,7 @@ import time
 import os
 from datetime import date
 import numpy as np
+import random
 
 mydb = mysql.connector.connect(
     host="localhost",
@@ -12,14 +13,20 @@ mydb = mysql.connector.connect(
     )
 
 
-def insert_user(username,email,age,sex):
+def insert_user(username,email,age,sex,password,facebook,twitter,phone,prof,insta):
     cursor = mydb.cursor()
-    add_data = ("INSERT INTO users (username, emailid, Age, Sex) VALUES (%(id)s, %(em)s, %(ag)s, %(sx)s)")
+    add_data = ("INSERT INTO users (username, emailid, age, sex,pass,facebook,twitter,phone,profession,instagram) VALUES (%(id)s, %(em)s, %(ag)s, %(sx)s, %(p)s, %(fc)s, %(tw)s, %(ph)s, %(pr)s, %(ins)s)")
     details = {
         'id':username,
         'em':email,
         'ag':age,
-        'sx':sex
+        'sx':sex,
+        'p':password,
+        'fc':facebook,
+        'tw':twitter,
+        'ph':phone,
+        'pr':prof,
+        'ins':insta
         }
 
     try:
@@ -29,16 +36,173 @@ def insert_user(username,email,age,sex):
     except:
         return 0
 
-def search_user(user):
+def get_user(user):
+    cursor = mydb.cursor()
+    cursor.execute("SELECT * FROM users WHERE username='{}'".format(user))
+    return cursor.fetchall()[0]
+
+def insert_problem(probhead,problem,userid,username,upvotes,image,categ,date):
+    #today = date.today()
+    cursor = mydb.cursor()
+    add_data = ("INSERT INTO problem (probhead,problem,userid,username,upvotes,image,categ,upload) VALUES (%(head)s,%(prob)s,%(us)s,%(user)s,%(up)s,%(img)s,%(categ)s,%(dob)s)")
+    details = {
+        'head':probhead,
+        'prob':problem,
+        'us':int(userid),
+        'user':username,
+        'up':int(upvotes),
+        'img':image,
+        'categ':categ,
+        #'dob':today.strftime("%y-%m-%d")
+        'dob':date
+        }
+
+    cursor.execute(add_data,details)
+    mydb.commit()
+
+    sql = ("SELECT * FROM problem WHERE problem='{}'".format(problem))
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    return result[0][0]
+
+def incre_likes(probid):
+    cursor = mydb.cursor()
+    cursor.execute("SELECT * FROM problem where probid='{}'".format(probid))
+    result = int(cursor.fetchall()[0][5]) + 1
+
+    sql = ("UPDATE problem SET upvotes='{}' WHERE probid='{}'".format(result,probid))
+    cursor.execute(sql)
+    mydb.commit()
+
+def decre_likes(probid):
+    cursor = mydb.cursor()
+    cursor.execute("SELECT * FROM problem where probid='{}'".format(probid))
+    result = int(cursor.fetchall()[0][5]) - 1
+
+    sql = ("UPDATE problem SET upvotes='{}' WHERE probid='{}'".format(result,probid))
+    cursor.execute(sql)
+    mydb.commit()    
+    
+
+def payentry(probid,username,comments,amount):
+    cursor = mydb.cursor()
+    add_data = ("INSERT INTO payment (probid,amount,comts,username) VALUES (%(pid)s,%(am)s,%(com)s,%(user)s)")
+    details = {
+        'pid':probid,
+        'am':amount,
+        'com':comments,
+        'user':username
+        }
+    cursor.execute(add_data,details)
+    mydb.commit()
+    updategoal(int(probid),int(amount))
+
+def top_contributor(probid):
+    cursor = mydb.cursor()
+    sql = ("SELECT username,amount FROM payment WHERE probid='{}' ORDER BY amount DESC".format(probid))
+    cursor.execute(sql)
+    result = cursor.fetchall()
+
+    index = []
+    user = []
+    amount = []
+
+    for i,res in enumerate(result):
+        index.append(i+1)
+        user.append(res[0])
+        amount.append(res[1])
+    return index,user,amount
+
+def goalinit(probid,goal):
+    cursor = mydb.cursor()
+    add_data = ("INSERT INTO goal (probid,amount,goal) VALUES (%(pid)s,%(am)s,%(go)s)")
+    details = {
+        'pid':probid,
+        'am':0,
+        'go':goal
+        }
+    cursor.execute(add_data,details)
+    mydb.commit()
+
+def updategoal(probid,amount):
+    cursor = mydb.cursor()
+    cursor.execute("SELECT * FROM goal WHERE probid='{}'".format(probid))
+    result = cursor.fetchall()
+    curr = amount + int(result[0][2])
+
+    sql = ("UPDATE goal SET amount='{}' WHERE probid='{}'".format(curr,probid))
+    cursor.execute(sql)
+    mydb.commit()
+
+def goalpercent(probid):
+    cursor = mydb.cursor()
+    cursor.execute("SELECT * FROM goal WHERE probid='{}'".format(probid))
+    result = cursor.fetchall()
+
+    percent = int(result[0][2])/int(result[0][3])
+
+    if(percent>=1):
+        return 100,int(result[0][2]),int(result[0][3])
+    
+    return percent*100,int(result[0][2]),int(result[0][3])
+        
+def insert_image(probid,image):
+    cursor = mydb.cursor()
+    add_data = ("INSERT INTO image_data (probid,img_path) VALUES (%(pid)s,%(img)s)")
+    details = {
+        'pid':probid,
+        'img':image
+        }
+    cursor.execute(add_data,details)
+    mydb.commit()
+
+def insert_pdf(probid,pdf):
+    cursor = mydb.cursor()
+    add_data = ("INSERT INTO pdf_upload (probid,pdf) VALUES (%(pid)s,%(p)s)")
+    details = {
+        'pid':probid,
+        'p':pdf
+        }
+    cursor.execute(add_data,details)
+    mydb.commit()
+
+def insert_link(probid,link):
+    cursor = mydb.cursor()
+    add_data = ("INSERT INTO links (probid,link) VALUES (%(pid)s,%(l)s)")
+    details = {
+        'pid':probid,
+        'l':link
+        }
+    cursor.execute(add_data,details)
+    mydb.commit()
+
+def insert_contact(probid,contact):
+    cursor = mydb.cursor()
+    add_data = ("INSERT INTO contact_info (probid,contact) VALUES (%(pid)s,%(con)s)")
+    details = {
+        'pid':probid,
+        'con':contact
+        }
+    cursor.execute(add_data,details)
+    mydb.commit()
+
+def search_user(user,password):
     cursor = mydb.cursor()
     cursor.execute("select * from users where username='{}'".format(user))
-    result=cursor.fetchall()
+    result=len(cursor.fetchall())
 
-    if(len(result)==0):
+    if result==0:
         return 0
-    else:
-        return 1
 
+    cursor.execute("select * from users where username='{}' and pass='{}'".format(user,password))
+    result=len(cursor.fetchall())
+
+    if result!=0:
+        return 1
+    else:
+        return -1
+
+    
 def get_data():
     today = date.today()
     cursor = mydb.cursor()
@@ -61,13 +225,14 @@ def get_sortdata(value):
     today = date.today()
     cursor = mydb.cursor()
     if int(value)==1:
-        cursor.execute("select * from problem order by upload asc")
+        cursor.execute("select * from old_to_new")
     if int(value)==2:
-        cursor.execute("select * from problem order by upload desc")
+        cursor.execute("select * from new_to_old")
     if int(value)==3:
-        cursor.execute("select * from problem order by upvotes desc")
+        cursor.execute("select * from high_upvotes")
     if int(value)==4:
-        cursor.execute("select * from problem order by upvotes asc")
+        cursor.execute("select * from low_upvotes")
+        
     result=cursor.fetchall()
     prob_id = []
     image = []
@@ -190,4 +355,91 @@ def image_probid(prob):
         image.append(res[0])
     return image
 
+def insert_postlike(probid,user,flag):
+    cursor = mydb.cursor()
+    if flag==1:
+        add_data = ("INSERT INTO like_post (probid,username) VALUES (%(pid)s,%(user)s)")
+        details = {
+            'pid':probid,
+            'user':user
+            }
+        cursor.execute(add_data,details)
+        incre_likes(probid)
+    else:
+        sql = ("DELETE FROM like_post WHERE probid='{}' AND username='{}'".format(probid,user))
+        cursor.execute(sql)
+        decre_likes(probid)
+    mydb.commit()
 
+def get_likedata(probid,user):
+    cursor = mydb.cursor()
+    sql = ("SELECT * FROM like_post WHERE probid='{}' AND username='{}'".format(probid,user))
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    return len(result)
+
+def like_array(prob_arr,user):
+    value=[]
+    for p in prob_arr:
+        value.append(get_likedata(p,user))
+    return value
+
+def profile_vector(gender):
+
+    image = []
+
+    if gender=='M':
+        path = 'static/files/user/male'
+    else:
+        path = 'static/files/user/female'
+
+    for file in os.listdir(path):
+        image.append(path+'/'+file)
+
+    return random.choice(image)
+
+def upvote_user(user):
+    try:
+        cursor = mydb.cursor()
+        sql = ("select sum(upvotes) from problem where username='{}'".format(user))
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        return int(result[0][0])
+    except:
+        return 0
+
+def total_donation(user):
+    cursor = mydb.cursor()
+    sql = ("select * from ranking where username='{}'".format(user))
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    return int(result[0][1])
+
+def get_rank(user):
+    cursor = mydb.cursor()
+    sql = ("select * from ranking")
+    cursor.execute(sql)
+    result = cursor.fetchall()
+
+    for i,res in enumerate(result):
+        if res[0]==user:
+            return i+1
+
+    return "not known"
+
+def rank_list():
+    cursor = mydb.cursor()
+    sql = ("select * from ranking")
+    cursor.execute(sql)
+    result = cursor.fetchall()
+
+    rank = []
+    name = []
+    amount = []
+
+    for i,res in enumerate(result):
+        rank.append(i+1)
+        name.append(res[0])
+        amount.append(int(res[1]))
+
+    return rank,name,amount

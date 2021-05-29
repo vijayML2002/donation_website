@@ -1,38 +1,91 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <title>Register</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</head>
-<body>
+<html>
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
+
 
 <div class="container">
-  <h2>Register form</h2>
-  <form action="{{url_for("register")}}" method="post">
-    <div class="form-group">
-      <label for="user">username:</label>
-      <input type="text" class="form-control" id="user" placeholder="Enter username" name="user">
-    </div>
-    <div class="form-group">
-      <label for="email">Email:</label>
-      <input type="text" class="form-control" id="email" placeholder="Enter email" name="email">
-    </div>
-    <div class="form-group">
-      <label for="age">Age:</label>
-      <input type="text" class="form-control" id="age" placeholder="Enter age" name="age">
-    </div>
-    <div class="form-group">
-      <label for="sex">Sex(M/F):</label>
-      <input type="text" class="form-control" id="sex" placeholder="Enter sex" name="sex">
-    </div>  
-    <button type="submit" class="btn btn-primary">Submit</button>
-  </form>
-</div>
+<br>  
+<hr>
 
-</body>
+
+<div class="row justify-content-center">
+<div class="col-md-6">
+<div class="card">
+<header class="card-header">
+	<a href="/" class="float-right btn btn-outline-primary mt-1">Log in</a>
+	<h4 class="card-title mt-2">Sign up</h4>
+</header>
+<article class="card-body">
+<form action="{{url_for("register")}}" method="post">
+    
+     <div class="form-group">
+		<label>Username</label>
+		<input type="text" class="form-control" placeholder="" name="user">
+	</div> <!-- form-group end.// -->
+	
+	<div class="form-group">
+		<label>Email address</label>
+		<input type="text" class="form-control" placeholder="" name="email">
+		<small class="form-text text-muted">We'll never share your email with anyone else.</small>
+	</div> <!-- form-group end.// -->
+    
+    <div class="form-group">
+		<label>Facebook link</label>
+		<input type="text" class="form-control" placeholder="" name="face">
+	</div> <!-- form-group end.// -->
+    
+    <div class="form-group">
+		<label>Twitter link</label>
+		<input type="text" class="form-control" placeholder="" name="twt">
+	</div> <!-- form-group end.// -->
+   
+    <div class="form-group">
+		<label>Instagram link</label>
+		<input type="text" class="form-control" placeholder="" name="inst">
+	</div> <!-- form-group end.// -->
+    
+    <div class="form-group">
+		<label>Phone Number</label>
+		<input type="text" class="form-control" placeholder="" name="phone">
+	</div> <!-- form-group end.// -->
+    
+    <div class="form-group">
+		<label>Profession</label>
+		<input type="text" class="form-control" placeholder="" name="prof">
+	</div> <!-- form-group end.// -->
+    
+    <div class="form-group">
+		<label>Age</label>
+		<input type="text" class="form-control" placeholder="" name="age">
+	</div> <!-- form-group end.// -->
+    
+    <div class="form-group">
+		<label>Sex(M/F)</label>
+		<input type="text" class="form-control" placeholder="" name="sex">
+	</div> <!-- form-group end.// -->
+    
+	
+	<div class="form-group">
+		<label>Create password</label>
+	    <input class="form-control" type="password" name="pass">
+	</div> <!-- form-group end.// -->  
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary btn-block"> Register  </button>
+    </div> <!-- form-group// -->      
+    <small class="text-muted">By clicking the 'Sign Up' button, you confirm that you accept our <br> Terms of use and Privacy Policy.</small>                                          
+</form>
+</article> <!-- card-body end .// -->
+<div class="border-top card-body text-center">Have an account? <a href="/">Log In</a></div>
+</div> <!-- card.// -->
+</div> <!-- col.//-->
+
+</div> <!-- row.//-->
+
+
+</div> 
+<!--container end.//-->
 </html>

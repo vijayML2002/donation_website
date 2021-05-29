@@ -1,0 +1,21 @@
+tables created
+
+1. contact_info(cfid,probid,contact)
+2. dbms_image(imgid,probid,img_path)
+3. goal(goalid,probid,amount,goal)
+4. image_data(imgid,probid,img_path)
+5. like_post(likeid,probid,username)
+6. links(linkid,probid,link)
+7. payment(payid,probid,amount,comts,username)
+8. pdf_upload(pdid,probid,pdf)
+9. problem(probid,probhead,problem,userid,username,upvotes,image,categ,upload)
+10. users(userid,username,emailid,age,sex,pass,facebook,twitter,phone,profession,instagram)
+
+
+views created
+
+1. high_upvotes
+2. low_upvotes
+3. new_to_old
+4. old_to_new
+5. ranking

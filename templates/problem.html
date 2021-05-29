@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">    
 <style>
 * {box-sizing: border-box}
 body {font-family: Verdana, sans-serif; margin:0}
@@ -162,7 +163,6 @@ body {
 	top:1px;
 }
     
-    
 </style>
 </head>
 <body>
@@ -179,6 +179,13 @@ body {
 <h1>
 {{head}}
 </h1>
+<br>
+<div class="w3-container">
+<div class="w3-border">
+  <div class="w3-grey" style="height:24px;width:{{percent}}%">${{amount}}/${{goal}}</div>
+</div>
+</div>    
+<br>    
 <p>
 {{detail}}
 </p>        
@@ -192,6 +199,19 @@ Contact Information
 {{contact}}
 </p>        
 </div>    
+
+{% if user_len>0 %}
+<div style="width: 55%; margin-left: 5%; margin-bottom: 5%; float: left; background-color: #21dba6; padding: 3%">
+<h1>
+Contributor
+</h1>
+{% for i in range(user_len) %}
+<p>
+{{ index[i] }} - {{ user[i] }} - {{ user_am[i] }}
+</p>
+{% endfor %}
+</div>
+{% endif %}
     
 <div style="margin-left: 70%; margin-top: 5%">    
 <div class="slideshow-container">
@@ -238,13 +258,22 @@ Contact Information
 <a href="{{link[i]}}" target="_blank">{{link_name[i]}}</a>
 {% endfor %}
 </div>
-</div>     
+</div>  
+    
+<div style="width: 80%; margin-right: 5%; margin-top: 3% ; padding: 2%">
+<button type="submit" class="myButton" id="myBtn">Donate</button>
+</div>
+
+<div style="width: 80%; margin-right: 5%; margin-top: 3% ; padding: 2%">
+<button type="submit" class="myButton" id="main">Main menu</button>
+</div>    
     
 </div>
     
 
     
-<script>
+<script>    
+    
 var slideIndex = 1;
 showSlides(slideIndex);
 
@@ -279,7 +308,16 @@ function hide_show(click) {
   } else {
     x.style.display = "none";
   }
-}    
+}
+
+document.getElementById("myBtn").onclick = function () {
+        location.href = "/main/problem/pay";
+    };    
+    
+document.getElementById("main").onclick = function () {
+        location.href = "/main";
+    };        
+    
 </script>
 
 </body>
